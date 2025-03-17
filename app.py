@@ -9,12 +9,11 @@ def createApp():
     db.init_app(app)
 
     datastore = SQLAlchemyUserDatastore(db, User, Role)
-    app.security = Security(app, datastore=datastore)
+    app.security = Security(app, datastore=datastore, register_blueprint=False)
     app.app_context().push()
     return app
 
 app=createApp()
-
 
 with app.app_context():
     db.create_all()
@@ -31,7 +30,7 @@ with app.app_context():
 
     db.session.commit()
 
-
+import backend.routes
 
 if(__name__=='__main__'):
     app.run(debug=True)
