@@ -2,7 +2,7 @@ import Navbar from "./components/Navbar.js"
 import router from "./utils/router.js"
 
 const app = new Vue({
-    el : '#app',
+    el : '#app',router,
     template : `
         <div> 
             <Navbar></Navbar>
@@ -11,5 +11,5 @@ const app = new Vue({
     `,
     components:{
         Navbar,
-    },router,
+    }
 })
