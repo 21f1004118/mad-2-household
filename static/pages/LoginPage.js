@@ -1,31 +1,53 @@
 export default {
     template : `
-    <div>
-        <input placeholder="Username"  v-model="Username"/>  
-        <input placeholder="password"  v-model="password"/>  
-        <button class='btn btn-primary' @click="submitLogin"> Login </button>
-    </div>
+    <div class="container">
+        <h1 align="center"> HOUSEHOLD SERVICES</h1>
+            <div class="mb-3">
+                <label for="Username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="Username" v-model="formdata.Username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" v-model="formdata.password">
+            </div>
+            <button type="submit" class="btn btn-primary" @click="submitLogin">Login</button> 
+        </div>
     `,
 data(){
     return {
-        Username : null,
-        password : null,
+        formdata:{
+            Username : null,
+            password : null,
+        }
     } 
 },
 
 methods : {
-    async submitLogin(){
-        const res = await fetch(location.origin+'/login',
+    submitLogin(){
+        fetch(location.origin+'/login',
             {
                 method : 'POST', 
                 headers: {'Content-Type' : 'application/json'}, 
-                body : JSON.stringify({'Username': this.Username,'password': this.password})
+                body : JSON.stringify(this.formdata)
             })
-        if (res.ok){
-            console.log('we are logged in')
-            const data = await res.json()
+        .then(response => response.json())
+        .then(data => { 
             console.log(data)
+            if(Object.keys(data).includes("token")){
+                localStorage.setItem("token", data.token)
+                localStorage.setItem("id", data.id)
+                localStorage.setItem("username", data.Username)
+                if(data.role.includes('admin')){
+                    this.$router.push('/admin')
+                }else{
+                    this.$router.push('/dashboard')
+                }   
+            }
+            else{
+                this.message = data.message
+            }
         }
+        )   
     }
 }
 }

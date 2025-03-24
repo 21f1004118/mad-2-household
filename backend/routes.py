@@ -1,5 +1,5 @@
 from flask import current_app as app, request, jsonify, render_template
-from flask_security import auth_required, verify_password, hash_password, roles_required
+from flask_security import auth_required, verify_password, hash_password, roles_required, login_user, roles_accepted, current_user
 from backend.models import *
 
 
@@ -13,6 +13,17 @@ def home():
 @auth_required()
 def protected():
     return '<h1> protected </h1>'
+
+@app.route('/api/home')
+@auth_required('token')
+@roles_accepted('professional', 'customer', 'admin')#and
+# @roles_accepted(['user', 'admin']) #OR
+def user_home():
+    user = current_user
+    print('hello')
+    return jsonify({
+        "username": user.Username,
+    })
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -30,10 +41,10 @@ def login():
         return jsonify({"message" : "invalid Username"}), 404
     
     if verify_password(password, user.password):
+        login_user(user)
         return jsonify({'token' : user.get_auth_token(), 'Username' : user.Username, 'role' : user.roles[0].name, 'id' : user.ID})
     
     return jsonify({'message' : 'password wrong'}), 400
-
 
 @app.route('/registercustomer',methods=['POST'])
 def register_customer():
@@ -96,6 +107,7 @@ def register_professional():
         db.session.rollback()
         return jsonify({"message" : "error creating professional"}), 400'''
     
+
 
 
 @app.route('/professional/block/<int:pid>')

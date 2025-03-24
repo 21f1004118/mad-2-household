@@ -21,12 +21,13 @@ methods : {
             {
                 method : 'POST', 
                 headers: {'Content-Type' : 'application/json'}, 
-                body : JSON.stringify({'Username': this.Username,'password': this.password, 'location' : this.role})
+                body : JSON.stringify({'Username': this.Username,'password': this.password, 'location' : this.location})
             })
         if (res.ok){
             console.log('Registered')
             const data = await res.json()
             console.log(data)
+            this.$router.push('/login')
         }
     }
 }

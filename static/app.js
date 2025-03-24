@@ -6,9 +6,15 @@ const app = new Vue({
     template : `
         <div> 
             <Navbar></Navbar>
+            <div>
+             Hello from {{check}}
+            </div>
             <router-view> </router-view>
         </div>
     `,
+    data:{
+        check : "Frontend"
+    },
     components:{
         Navbar,
     }

@@ -28,7 +28,7 @@ class Service(db.Model):
     __tablename__='Service'
     ID = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
-    BasePrice = db.Column(db.Numeric)
+    BasePrice = db.Column(db.Integer)
     TimeReq=db.Column(db.String)
     Description=db.Column(db.String)
 

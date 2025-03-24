@@ -29,6 +29,7 @@ methods : {
             console.log('Registered')
             const data = await res.json()
             console.log(data)
+            this.$router.push('/login')
         }
     }
 }

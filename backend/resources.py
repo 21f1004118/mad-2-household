@@ -27,7 +27,7 @@ class hhApi(Resource):
         for professional in professionals:
             this_professional={}
             this_professional['ID']=professional.ID
-            this_professional['Name']=professional.Name
+            this_professional['name']=professional.Name
             this_professional['Service']=professional.Service
             this_professional['BasePrice']=professional.BasePrice
             professionals_json.append(this_professional)
@@ -40,11 +40,8 @@ class hhApi(Resource):
             this_service['BasePrice']=service.BasePrice
             services_json.append(this_service)
         
-        if professionals_json or services_json:
-            return jsonify({
-            'services': services_json,
-            'professionals': professionals_json
-        })
+        #if professionals_json or services_json:
+        return jsonify({'services': services_json}, {'professionals': professionals_json}) 
         
         return {
             "message": "No transactions found" 
@@ -57,8 +54,10 @@ class hhApi(Resource):
         try:
             name=data.get('Name')
             baseprice=data.get('BasePrice')
+            timereq=data.get('Timereq')
+            desc=data.get('Desc')
 
-            newservice=Service(Name=name, BasePrice=baseprice)
+            newservice=Service(Name=name, BasePrice=baseprice, TimeReq=timereq, Description=desc )
             db.session.add(newservice)
             db.session.commit()
             return  {
