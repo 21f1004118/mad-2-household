@@ -6,6 +6,16 @@ export default {
         <router-link to='/register'>Register</router-link>
         <router-link to='/register_customer'>Customer Register</router-link>
         <router-link to='/register_professional'>Professional Register</router-link>
+        <button @click="logout">Logout</button>
     </div>
-    `
+    `,
+
+methods:{
+    logout(){
+        localStorage.removeItem('id')
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
+        this.$router.push('/')
+    }
+}
 }

@@ -4,7 +4,11 @@ export default {
         <input placeholder="Username"  v-model="Username"/>  
         <input placeholder="password"  v-model="password"/> 
         <input placeholder="location"  v-model="location"/>
-        <input placeholder="serviceid"  v-model="serviceid"/>
+        <select class="custom-select" id="inputGroupSelect01" v-model="serviceid">
+            <option v-for="service in services" :key="service.ID" :value="service.ID">
+                {{ service.Name }}
+            </option>
+        </select>
         <button class='btn btn-primary' @click="submitLogin"> Register</button>
     </div>
     `,
@@ -13,8 +17,13 @@ data(){
         Username : null,
         password : null,
         location : null,
-        serviceid : null
-    } 
+        serviceid : null,
+        services : " "
+    }
+    
+},
+mounted(){
+    this.getservices()
 },
 
 methods : {
@@ -31,6 +40,20 @@ methods : {
             console.log(data)
             this.$router.push('/login')
         }
+    },
+    getservices(){
+        fetch('/api/getservices', {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authentication-Token": localStorage.getItem("token")
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+           console.log(data)
+           this.services=data
+        })
     }
 }
 }

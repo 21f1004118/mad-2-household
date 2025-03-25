@@ -1,24 +1,50 @@
 export default {
     template : `
     <div>
-    <h4 align="center">Services</h4>
+        <div>
+        <h4 align="center">Services</h4>
+        <table class="table table-striped">
+            <thead>
+                <th scope="col">ID</th>
+                <th scope="col">Service</th>
+                <th scope="col">Base Price</th>
+                <th scope="col">Action</th>
+            </thead>
+            <tbody>
+                <tr v-for="(service,index) in services" >
+                    <th scope="row">{{ index+1 }}</th>
+                    <td>{{service.name}}</td>
+                    <td>{{service.BasePrice}}</td>
+                    <td> <a href="#" @click.prevent="deleteService(service.ID)">Delete</a>
+                    <router-link :to="'/update_service/'+ service.ID">update</router-link>
+                    </td>
+                </tr>
+            </tbody>
+        </table><br>
+        <router-link to='/add_service'>add service</router-link>
+        </div>
+    <div>
+    <h4 align="center">Professionals</h4>
     <table class="table table-striped">
         <thead>
             <th scope="col">ID</th>
+            <th scope="col">Name</th>
             <th scope="col">Service</th>
-            <th scope="col">Base Price</th>
+            <th scope="col">Status</th>
             <th scope="col">Action</th>
         </thead>
         <tbody>
-            <tr v-for="(service,index) in services" >
-                <th scope="row">{{ index+1 }}</th>
-                <td>{{service.name}}</td>
-                <td>{{service.BasePrice}}</td>
-                <td button @click="deleteService(service.ID)" class="btn btn-success">Delete</td>
+            <tr v-for="(professional,index) in professionals" >
+                <th scope="row">{{index+1}}</th></a>
+                <td>{{professional.name}}</td>
+                <td>{{professional.Service}}</td>
+                <td>{{professional.Status}}</td>
+                <td><a href="#" @click.prevent="ApproveProf(professional.ID)">Approve</a></td>
+                <td><a href="#" @click.prevent="BlockProf(professional.ID)">Block</a></td>
             </tr>
         </tbody>
-    </table><br>
-    <router-link to='/add_service'>add service</router-link>
+    </table>
+    </div>
     </div>
     `
 ,
@@ -83,6 +109,34 @@ methods: {
             console.log(data)
             this.$router.go(0)
         })
+    },
+    ApproveProf(id){
+        fetch(`professional/approve/${id}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authentication-Token": localStorage.getItem("token")
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+                console.log(data)
+                this.$router.go(0)
+            })
+    },
+    BlockProf(id){
+        fetch(`professional/block/${id}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "Authentication-Token": localStorage.getItem("token")
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+                console.log(data)
+                this.$router.go(0)
+            })
     }
     }
 }

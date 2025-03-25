@@ -24,12 +24,14 @@ class hhApi(Resource):
         if current_user.roles[0]=='admin':
             professionals=Service_Professional.query.all()
             services=Service.query.all()
+            
         for professional in professionals:
             this_professional={}
             this_professional['ID']=professional.ID
             this_professional['name']=professional.Name
             this_professional['Service']=professional.Service
             this_professional['BasePrice']=professional.BasePrice
+            this_professional['Status']=professional.Status
             professionals_json.append(this_professional)
         
         

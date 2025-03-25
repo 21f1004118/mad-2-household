@@ -39,8 +39,8 @@ methods : {
                 localStorage.setItem("username", data.Username)
                 if(data.role.includes('admin')){
                     this.$router.push('/admin')
-                }else{
-                    this.$router.push('/dashboard')
+                }else if(data.role.includes('customer')){
+                    this.$router.push('/customer_dashboard')
                 }   
             }
             else{
