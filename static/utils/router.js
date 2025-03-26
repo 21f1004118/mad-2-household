@@ -10,7 +10,8 @@ import AdminHome from "../pages/AdminHome.js";
 import AddService from "../pages/NewService.js";
 import UpdateService from "../pages/UpdateService.js";
 import CustomerPage from "../pages/CustomerPage.js"
-import BookService from "../pages/BookService.js"
+import BookService from "../pages/BookService.js";
+import ProfessionalPage from "../pages/ProfessionalPage.js"
 
 
 const routes = [
@@ -23,7 +24,8 @@ const routes = [
     {path : '/add_service', component : AddService},
     {path : '/update_service/:ID', component : UpdateService, props: route =>({ID:route.params.ID})},
     {path : '/customer_dashboard', component: CustomerPage},
-    {path : '/book_service/:ID', component: BookService, props: route =>({ID:route.params.ID}) }
+    {path : '/book_service/:ID', component: BookService, props: route =>({ID:route.params.ID}) },
+    {path : '/professional_dashboard', component : ProfessionalPage}
 ]
 
 const router = new VueRouter({

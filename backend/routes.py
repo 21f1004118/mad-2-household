@@ -209,3 +209,65 @@ def close_service(srid):
     servicereq.Status="closed"
     db.session.commit()
     return jsonify({"message" : "request closed"}), 200
+
+@app.route('/api/getassigned_serv/<int:uid>')
+@auth_required('token')
+def assigned_service(uid):
+    assigned_services_json=[]
+    profid=Service_Professional.query.filter_by(User_id=uid).first().ID
+    assigned_services=Service_Request.query.filter_by(Professional_id=profid, Status='assigned')
+    for req in assigned_services:
+        this_req={}
+        custname=Customer.query.filter_by(ID=req.Customer_id).first().Name
+        this_req['ID']=req.ID
+        this_req['CustName']=custname
+        this_req['Date']=req.Date
+        assigned_services_json.append(this_req)
+    return jsonify(assigned_services_json)
+
+@app.route('/api/getaccepted_serv/<int:uid>')
+@auth_required('token')
+def accepted_service(uid):
+    accepted_services_json=[]
+    profid=Service_Professional.query.filter_by(User_id=uid).first().ID
+    accepted_services=Service_Request.query.filter_by(Professional_id=profid, Status='accepted')
+    for req in accepted_services:
+        this_req={}
+        custname=Customer.query.filter_by(ID=req.Customer_id).first().Name
+        this_req['ID']=req.ID
+        this_req['CustName']=custname
+        this_req['Date']=req.Date
+        accepted_services_json.append(this_req)
+    return jsonify(accepted_services_json)
+
+@app.route('/api/getclosed_serv/<int:uid>')
+@auth_required('token')
+def closed_service(uid):
+    closed_services_json=[]
+    profid=Service_Professional.query.filter_by(User_id=uid).first().ID
+    closed_services=Service_Request.query.filter_by(Professional_id=profid, Status='closed')
+    for req in closed_services:
+        this_req={}
+        custname=Customer.query.filter_by(ID=req.Customer_id).first().Name
+        this_req['ID']=req.ID
+        this_req['CustName']=custname
+        this_req['Date']=req.Date
+        closed_services_json.append(this_req)
+    return jsonify(closed_services_json)
+
+@app.route('/api/accept_req/<int:srid>')
+@auth_required('token')
+def accept_service(srid):
+    servicereq=Service_Request.query.get(srid)
+    servicereq.Status="accepted"
+    db.session.commit()
+    return jsonify({"message" : "request accepted"}), 200
+
+@app.route('/api/reject_req/<int:srid>')
+@auth_required('token')
+def reject_service(srid):
+    servicereq=Service_Request.query.get(srid)
+    servicereq.Status="rejected"
+    db.session.commit()
+    return jsonify({"message" : "request rejected"}), 200
+

@@ -41,7 +41,9 @@ methods : {
                     this.$router.push('/admin')
                 }else if(data.role.includes('customer')){
                     this.$router.push('/customer_dashboard')
-                }   
+                }else if(data.role.includes('professional')){
+                    this.$router.push('professional_dashboard')
+                }
             }
             else{
                 this.message = data.message
