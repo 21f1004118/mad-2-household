@@ -2,6 +2,9 @@ export default {
     template : `
     <div>
         <div>
+        <button @click="create_csv"> List of Services Data </button>
+        </div>
+        <div>
         <h4 align="center">Services</h4>
         <table class="table table-striped">
             <thead>
@@ -137,7 +140,22 @@ methods: {
                 console.log(data)
                 this.$router.go(0)
             })
+    },
+    async create_csv(){
+        const res = await fetch('/create-csv')
+        const task_id = (await res.json()).task_id
+
+        const interval = setInterval(async() => {
+            const res = await fetch(`${location.origin}/get-csv/${task_id}` )
+            if (res.ok){
+                console.log('data is ready')
+                window.open(`${location.origin}/get-csv/${task_id}`)
+                clearInterval(interval)
+            }
+
+        }, 100)
     }
-    }
+        
+}
 }
 

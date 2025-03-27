@@ -1,8 +1,9 @@
-from flask import current_app as app, request, jsonify, render_template
+from flask import current_app as app, request, jsonify, render_template, send_file, send_from_directory
 from flask_security import auth_required, verify_password, hash_password, roles_required, login_user, roles_accepted, current_user
 from backend.models import *
+from backend.celery.tasks import add, create_csv
+from celery.result import AsyncResult
 from datetime import datetime
-
 
 cache=app.cache
 
@@ -12,6 +13,17 @@ datastore=app.security.datastore
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/celery')
+def celery():
+    task = add.delay(10, 30)
+    return {'task_id' : task.id}
+
+@app.route('/get_celery/<id>')
+def celery_get(id):
+    res = AsyncResult(id)
+    if res.ready():
+        return {'ans':res.result}
 
 
 @app.route('/cache')
@@ -280,3 +292,19 @@ def reject_service(srid):
     db.session.commit()
     return jsonify({"message" : "request rejected"}), 200
 
+
+
+@app.get('/get-csv/<id>')
+def getCSV(id):
+    result = AsyncResult(id)
+
+    if result.ready():
+        return send_file(f'./backend/celery//{result.result}')
+    else:
+        return {'message' : 'task not ready'}
+
+
+@app.get('/create-csv')
+def createCSV():
+    task = create_csv.delay()
+    return {'task_id' : task.id}

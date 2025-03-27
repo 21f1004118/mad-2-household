@@ -1,8 +1,10 @@
 from flask import Flask
 from backend.config import LocalDevelopmentConfig
 from backend.models import db, User, Role
+from backend.celery.celery_create import celery_init_app
 from flask_security import Security, SQLAlchemyUserDatastore, hash_password, auth_required
 from flask_caching import Cache
+import flask_excel as excel
 
 
 def createApp():
@@ -26,6 +28,8 @@ def createApp():
 
 app=createApp()
 
+celery_app = celery_init_app(app)
+
 with app.app_context():
     db.create_all()
 
@@ -43,6 +47,7 @@ with app.app_context():
     db.session.commit()
 
 import backend.routes
+excel.init_excel(app)
 
 if(__name__=='__main__'):
     app.run(debug=True)
