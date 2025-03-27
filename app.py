@@ -2,18 +2,26 @@ from flask import Flask
 from backend.config import LocalDevelopmentConfig
 from backend.models import db, User, Role
 from flask_security import Security, SQLAlchemyUserDatastore, hash_password, auth_required
-from backend.resources import api
+from flask_caching import Cache
+
 
 def createApp():
     app=Flask(__name__)
     app.config.from_object(LocalDevelopmentConfig)
 
     db.init_app(app)
-    api.init_app(app)
+    cache=Cache(app)
 
     datastore = SQLAlchemyUserDatastore(db, User, Role)
     app.security = Security(app, datastore=datastore, register_blueprint=False)
+    app.cache=cache
+
     app.app_context().push()
+
+    from backend.resources import api
+    api.init_app(app)
+
+
     return app
 
 app=createApp()

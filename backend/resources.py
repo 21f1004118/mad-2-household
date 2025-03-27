@@ -1,7 +1,9 @@
-from flask_restful import Api, Resource, request
+from flask_restful import Api, Resource, request, current_app as app
 from flask_security import auth_required, roles_required, roles_accepted, current_user
 from .models import *
 from flask import jsonify
+
+cache=app.cache
 
 api= Api()
 
@@ -15,6 +17,7 @@ api= Api()
 class hhApi(Resource):
     @auth_required('token')
     @roles_accepted('admin','customer', 'profesional')
+    @cache.cached(timeout=5)
     def get(self):
         services=[]
         services_json=[]

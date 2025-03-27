@@ -1,6 +1,10 @@
 from flask import current_app as app, request, jsonify, render_template
 from flask_security import auth_required, verify_password, hash_password, roles_required, login_user, roles_accepted, current_user
 from backend.models import *
+from datetime import datetime
+
+
+cache=app.cache
 
 
 datastore=app.security.datastore
@@ -9,6 +13,12 @@ datastore=app.security.datastore
 def home():
     return render_template('index.html')
 
+
+@app.route('/cache')
+@cache.cached(timeout=5)
+def cache():
+    return {'time': str(datetime.now())}
+
 @app.route('/protected')
 @auth_required()
 def protected():
@@ -16,8 +26,7 @@ def protected():
 
 @app.route('/api/home')
 @auth_required('token')
-@roles_accepted('professional', 'customer', 'admin')#and
-# @roles_accepted(['user', 'admin']) #OR
+@roles_accepted('professional', 'customer', 'admin')
 def user_home():
     user = current_user
     print('hello')
