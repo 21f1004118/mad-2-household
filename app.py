@@ -47,6 +47,7 @@ with app.app_context():
     db.session.commit()
 
 import backend.routes
+import backend.celery.celery_beat
 excel.init_excel(app)
 
 if(__name__=='__main__'):

@@ -2,6 +2,7 @@ from celery import shared_task
 from backend.models import *
 import flask_excel
 import time
+import requests
 from jinja2 import Template
 from backend.mail import send_email
 
@@ -25,11 +26,10 @@ def create_csv(self):
     return filename
 
 
-@shared_task(ignore_result = False)
+@shared_task()
 def monthly_report():
     Customers=Customer.query.all()
     for customer in Customers:
-        print(customer.Name)
         customer_data={}
         customer_data['Name']=customer.Name
         customer_data['mail']=f'{customer.Name}@iit.com'
@@ -49,6 +49,20 @@ def monthly_report():
         content = format_report('templates/mail_report.html', customer_data)
         send_email(customer_data['mail'], subject = "monthly requests data", content=content)
     return "success"
+
+
+@shared_task()
+def daily_remainder():
+    servicereqs=Service_Request.query.filter_by(Status='assigned')
+    if servicereqs:
+        for req in servicereqs:
+            ProfName=Service_Professional.query.filter_by(ID=req.Professional_id).first().Name
+            text=f"Hello {ProfName}, you have an assigned service pending, kindly update the status"
+            response = requests.post("https://chat.googleapis.com/v1/spaces/AAAAE_OWDT8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=f34s1COj-OxsOTOzmRlYtqUfxT1vj0LjJIqWuLPkFDU", json = {"text": text})
+            print(response.status_code)
+    return "The delivery is sent to user"
+
+
 
 
 

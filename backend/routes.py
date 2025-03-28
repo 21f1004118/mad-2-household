@@ -316,13 +316,6 @@ def createCSV():
 def send_reports():
     res = monthly_report.delay()
     return {
-        "result": res.result
+        "result": res
     }
 
-'''@app.get('/get-main/<id>')
-def getmail(id):
-    result = AsyncResult(id)
-    if result.ready():
-        return {"result": result.result}
-    else:
-        return {'message' : 'task not ready'}'''
