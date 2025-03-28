@@ -1,7 +1,7 @@
 from flask import current_app as app, request, jsonify, render_template, send_file, send_from_directory
 from flask_security import auth_required, verify_password, hash_password, roles_required, login_user, roles_accepted, current_user
 from backend.models import *
-from backend.celery.tasks import add, create_csv
+from backend.celery.tasks import add, create_csv, monthly_report
 from celery.result import AsyncResult
 from datetime import datetime
 
@@ -299,7 +299,7 @@ def getCSV(id):
     result = AsyncResult(id)
 
     if result.ready():
-        return send_file(f'./backend/celery//{result.result}')
+        return send_file(f'./backend/celery/{result.result}')
     else:
         return {'message' : 'task not ready'}
 
@@ -308,3 +308,21 @@ def getCSV(id):
 def createCSV():
     task = create_csv.delay()
     return {'task_id' : task.id}
+
+
+
+
+@app.route('/report')
+def send_reports():
+    res = monthly_report.delay()
+    return {
+        "result": res.result
+    }
+
+'''@app.get('/get-main/<id>')
+def getmail(id):
+    result = AsyncResult(id)
+    if result.ready():
+        return {"result": result.result}
+    else:
+        return {'message' : 'task not ready'}'''
