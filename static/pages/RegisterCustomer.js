@@ -1,17 +1,29 @@
 export default {
     template : `
-    <div>
-        <input placeholder="Username"  v-model="Username"/>  
-        <input placeholder="password"  v-model="password"/> 
-        <input placeholder="location"  v-model="location"/>  
-        <button class='btn btn-primary' @click="submitLogin"> Register</button>
-    </div>
+    <div class="container">
+        <h1 align="center">Register Customer</h1>
+            <div class="mb-3">
+                <label for="Username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="Username" v-model="Username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" v-model="password">
+            </div>
+            <div class="mb-3">
+                <label for="Location" class="form-label">Location</label>
+                <input type="text" class="form-control" id="Username" v-model="location">
+            </div>
+            <button type="submit" class="btn btn-primary" @click="submitLogin">Register</button> 
+            <div>{{errormessage}}</div>
+        </div>
     `,
 data(){
     return {
         Username : null,
         password : null,
         location : null,
+        errormessage : null
     } 
 },
 
@@ -24,10 +36,13 @@ methods : {
                 body : JSON.stringify({'Username': this.Username,'password': this.password, 'location' : this.location})
             })
         if (res.ok){
-            console.log('Registered')
             const data = await res.json()
-            console.log(data)
-            this.$router.push('/login')
+            this.errormessage=data.message
+            console.log(this.errormessage)
+            if(data.message== "customer created" ){
+                this.$router.push('/login')
+            }
+            
         }
     }
 }

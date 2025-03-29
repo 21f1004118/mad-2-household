@@ -41,8 +41,6 @@ with app.app_context():
 
     if (not userdatastore.find_user(Username = 'admin')):
         userdatastore.create_user(Username = 'admin', password = hash_password('password'), roles = ['admin'] )
-    #if (not userdatastore.find_user(Username = 'user01@study.iitm.ac.in')):
-    #    userdatastore.create_user(Username = 'user01@study.iitm.ac.in', password = hash_password('pass'), roles = ['user'] ) # for testing
 
     db.session.commit()
 

@@ -1,5 +1,6 @@
 from flask import current_app as app, request, jsonify, render_template, send_file, send_from_directory
 from flask_security import auth_required, verify_password, hash_password, roles_required, login_user, roles_accepted, current_user
+import redis.client
 from backend.models import *
 from backend.celery.tasks import add, create_csv, monthly_report
 from celery.result import AsyncResult
@@ -28,7 +29,7 @@ def celery_get(id):
 
 @app.route('/cache')
 @cache.cached(timeout=5)
-def cache():
+def cacheing():
     return {'time': str(datetime.now())}
 
 @app.route('/protected')
@@ -76,12 +77,12 @@ def register_customer():
     location = data.get('location')
 
     if not Username or not password :
-        return jsonify({"message" : "invalid inputs"}), 404
+        return jsonify({"message" : "username or password missing"})
     
     user = datastore.find_user(Username = Username)
 
     if user:
-        return jsonify({"message" : "customer already exists"}), 404
+        return jsonify({"message" : "customer already exists"})
 
     try :
         datastore.create_user(Username = Username, password = hash_password(password), roles = ['customer'], active = True)
@@ -91,10 +92,10 @@ def register_customer():
         new_customer=Customer(Name=Username, User_id=id, Location=location)
         db.session.add(new_customer)
         db.session.commit()
-        return jsonify({"message" : "customer created"}), 200
+        return jsonify({"message" : "customer created"})
     except:
         db.session.rollback()
-        return jsonify({"message" : "error creating customer"}), 400
+        return jsonify({"message" : "Error-Customer not created"})
     
 
 @app.route('/registerprofessional',methods=['POST'])
@@ -106,30 +107,28 @@ def register_professional():
     location = data.get('location')
     serviceid = data.get('serviceid')
 
-    if not Username or not password :
-        return jsonify({"message" : "invalid inputs"}), 404
+    if not Username or not password or not serviceid :
+        return jsonify({"message" : "required details missing"})
     
     user = datastore.find_user(Username = Username)
 
     if user:
-        return jsonify({"message" : "professional already exists"}), 404
+        return jsonify({"message" : "professional already exists"})
 
-    #try :
-    datastore.create_user(Username = Username, password = hash_password(password), roles = ['professional'], active = True)
-    db.session.commit()
-    this_user=User.query.filter_by(Username=Username).first()
-    id=this_user.ID
-    this_service=Service.query.filter_by(ID=serviceid).first()
-    new_professional=Service_Professional(Name=Username, User_id=id, Location=location, Service=this_service.Name, Service_id=this_service.ID, Status='blocked' )
-    db.session.add(new_professional)
-    db.session.commit()
-    return jsonify({"message" : "professional created"}), 200
-    '''except:
+    try :
+        datastore.create_user(Username = Username, password = hash_password(password), roles = ['professional'], active = True)
+        db.session.commit()
+        this_user=User.query.filter_by(Username=Username).first()
+        id=this_user.ID
+        this_service=Service.query.filter_by(ID=serviceid).first()
+        new_professional=Service_Professional(Name=Username, User_id=id, Location=location, Service=this_service.Name, Service_id=this_service.ID, Status='blocked' )
+        db.session.add(new_professional)
+        db.session.commit()
+        return jsonify({"message" : "professional created"})
+    except:
         db.session.rollback()
-        return jsonify({"message" : "error creating professional"}), 400'''
+        return jsonify({"message" : "Error-Professional not created"})
     
-
-
 
 @app.route('/professional/block/<int:pid>')
 @auth_required('token') 
@@ -139,6 +138,7 @@ def professional_block(pid):
     this_prof.Status='blocked'
     db.session.add(this_prof)
     db.session.commit()
+    cache.clear()
     return jsonify({"message" : "professional blocked"}), 200
 
 @app.route('/professional/approve/<int:pid>')
@@ -188,7 +188,6 @@ def professionals(sid):
             this_professional={}
             this_professional['ID']=professional.ID
             this_professional['Name']=professional.Name
-            this_professional['BasePrice']=professional.BasePrice
             this_professional['Location']=professional.Location
             professionals_json.append(this_professional)
     return jsonify(professionals_json)
@@ -331,7 +330,6 @@ def admin_search():
         this_professional['ID']=professional.ID
         this_professional['name']=professional.Name
         this_professional['Service']=professional.Service
-        this_professional['BasePrice']=professional.BasePrice
         this_professional['Status']=professional.Status
         professionals_json.append(this_professional)
     return jsonify(professionals_json)

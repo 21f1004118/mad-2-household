@@ -1,11 +1,14 @@
 export default {
     template : `
     <div>
+    <div>
+       <h1 align="center"> Admin Page </h1>
+    </div>
         <div>
-        <button @click="CreateCSV"> List of Services Data </button>
+        <button @click="CreateCSV"> List of Service Professionals</button>
         </div>
-        <div>
-            <router-link to='/admin_search'>Search</router-link>
+        <div align="right">
+            <h3><router-link to='/admin_search'>Search</router-link></h3>
         </div>
         <div>
         <h4 align="center">Services</h4>

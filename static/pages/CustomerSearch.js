@@ -2,7 +2,7 @@
 export default{
     template:
     `<div>
-    <div>service  Search</div>
+    <h3><div align="center">Service Search</div></h3>
     <div>
     <label for="search_type">Search Type</label>
     <select v-model="Searchby" id="search_type" class="form-control" required>

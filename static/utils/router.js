@@ -1,5 +1,13 @@
 const Home = {
-    template : `<h1> this is home </h1>`
+    template : `
+    <div>
+    <h1 align="center"> Welcome to household services app</h1>
+    <div class="container">
+        <div><router-link to='/login'>Login</router-link></div>
+        <div><router-link to='/register_customer'>Customer Register</router-link></div>
+        <div><router-link to='/register_professional'>Professional Register</router-link></div> 
+    </div>
+    </div>`
 }
 
 import LoginPage from "../pages/LoginPage.js";

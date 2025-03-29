@@ -6,7 +6,7 @@ export default{
     },
     template:`
     <div>
-        BOok service 
+        <h3>Book service</h3> 
         <h4 align="center">Professionals</h4>
     <table class="table table-striped">
         <thead>

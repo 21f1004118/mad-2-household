@@ -11,6 +11,7 @@ export default {
                 <input type="password" class="form-control" id="password" v-model="formdata.password">
             </div>
             <button type="submit" class="btn btn-primary" @click="submitLogin">Login</button> 
+            <div>{{errormessage}}</div>
         </div>
     `,
 data(){
@@ -18,7 +19,8 @@ data(){
         formdata:{
             Username : null,
             password : null,
-        }
+        },
+        errormessage : null
     } 
 },
 
@@ -46,7 +48,7 @@ methods : {
                 }
             }
             else{
-                this.message = data.message
+                this.errormessage = data.message
             }
         }
         )   

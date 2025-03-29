@@ -44,12 +44,10 @@ class Service_Professional(db.Model):
     ID = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
     Service = db.Column(db.String)
-    BasePrice = db.Column(db.Integer)
     Service_id=db.Column(db.Integer, db.ForeignKey('Service.ID'))
     User_id=db.Column(db.Integer, db.ForeignKey('User.ID'))
     Status=db.Column(db.String)
     Location=db.Column(db.String)
-    Document=db.Column(db.String)
 
 class Service_Request(db.Model):
     __tablename__='Service_Request'

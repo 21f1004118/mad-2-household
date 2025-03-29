@@ -33,7 +33,6 @@ class hhApi(Resource):
             this_professional['ID']=professional.ID
             this_professional['name']=professional.Name
             this_professional['Service']=professional.Service
-            this_professional['BasePrice']=professional.BasePrice
             this_professional['Status']=professional.Status
             professionals_json.append(this_professional)
         
@@ -107,6 +106,7 @@ class hhApi(Resource):
             db.session.query(User).filter_by(ID=usr_id).delete()
         db.session.query(Service).filter_by(ID=sid).delete()
         db.session.commit()
+        cache.clear()
         return  {
                 "message": "Service deleted" 
             }, 200

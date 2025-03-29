@@ -1,15 +1,29 @@
 export default {
     template : `
     <div>
-        <input placeholder="Username"  v-model="Username"/>  
-        <input placeholder="password"  v-model="password"/> 
-        <input placeholder="location"  v-model="location"/>
-        <select class="custom-select" id="inputGroupSelect01" v-model="serviceid">
-            <option v-for="service in services" :key="service.ID" :value="service.ID">
-                {{ service.Name }}
-            </option>
-        </select>
+        <h1 align="center">Register Professional</h1>
+        <div class="mb-3">
+            <label for="Username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="Username" v-model="Username">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" v-model="password">
+        </div>
+        <div class="mb-3">
+            <label for="Location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="Username" v-model="location">
+        </div>
+        <div class="mb-3">
+            <label for="Select Service" class="form-label">Select Service</label>
+                <select class="custom-select" id="inputGroupSelect01" v-model="serviceid">
+                    <option v-for="service in services" :key="service.ID" :value="service.ID">
+                        {{ service.Name }}
+                    </option>
+                </select>
+        </div>
         <button class='btn btn-primary' @click="submitLogin"> Register</button>
+        <div>{{errormessage}}</div>
     </div>
     `,
 data(){
@@ -18,7 +32,8 @@ data(){
         password : null,
         location : null,
         serviceid : null,
-        services : " "
+        services : " ",
+        errormessage: null
     }
     
 },
@@ -35,10 +50,11 @@ methods : {
                 body : JSON.stringify({'Username': this.Username, 'password': this.password, 'location' : this.location, 'serviceid': this.serviceid})
             })
         if (res.ok){
-            console.log('Registered')
             const data = await res.json()
-            console.log(data)
-            this.$router.push('/login')
+            this.errormessage=data.message
+            if(data.message== "professional created" ){
+                this.$router.push('/login')
+            }
         }
     },
     getservices(){

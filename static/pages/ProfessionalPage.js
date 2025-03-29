@@ -1,7 +1,7 @@
 export default{
     template:`
     <div>
-        Hello from Professional
+        Hello Professional
         <h4 align="center">Service Requests</h4>
         <table class="table table-striped">
             <thead>
@@ -43,7 +43,6 @@ export default{
                 <th scope="col">ID</th>
                 <th scope="col">Service</th>
                 <th scope="col">Date</th>
-                <th scope="col">Action</th>
             </thead>
             <tbody>
                     <tr v-for="(req,index) in closed">

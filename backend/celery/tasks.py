@@ -13,10 +13,10 @@ def add(x,y):
 
 @shared_task(ignore_result = False, bind=True)
 def create_csv(self):
-    services=Service.query.all()
+    services=Service_Professional.query.all()
     task_id = self.request.id
-    filename = f'Services.csv'
-    column_names = [column.name for column in Service.__table__.columns]
+    filename = f'Services_professionals.csv'
+    column_names = [column.name for column in Service_Professional.__table__.columns]
     print(column_names)
     csv_out = flask_excel.make_response_from_query_sets(services, column_names = column_names, file_type='csv' )
 
@@ -52,7 +52,7 @@ def monthly_report():
 
 
 @shared_task()
-def daily_remainder():
+def daily_reminder():
     servicereqs=Service_Request.query.filter_by(Status='assigned')
     if servicereqs:
         for req in servicereqs:
@@ -60,7 +60,7 @@ def daily_remainder():
             text=f"Hello {ProfName}, you have an assigned service pending, kindly update the status"
             response = requests.post("https://chat.googleapis.com/v1/spaces/AAAAE_OWDT8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=f34s1COj-OxsOTOzmRlYtqUfxT1vj0LjJIqWuLPkFDU", json = {"text": text})
             print(response.status_code)
-    return "The delivery is sent to user"
+    return "Reminder sent to user"
 
 
 

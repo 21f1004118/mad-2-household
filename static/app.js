@@ -5,10 +5,7 @@ const app = new Vue({
     el : '#app',router,
     template : `
         <div> 
-            <Navbar></Navbar>
-            <div>
-             Hello from {{check}}
-            </div>
+            <div align="right"><Navbar></Navbar></div>
             <router-view> </router-view>
         </div>
     `,
