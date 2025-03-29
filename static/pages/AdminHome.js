@@ -5,6 +5,9 @@ export default {
         <button @click="CreateCSV"> List of Services Data </button>
         </div>
         <div>
+            <router-link to='/admin_search'>Search</router-link>
+        </div>
+        <div>
         <h4 align="center">Services</h4>
         <table class="table table-striped">
             <thead>

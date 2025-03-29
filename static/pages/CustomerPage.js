@@ -2,6 +2,8 @@ export default{
     template:`
     <div>
     Hello
+    <div> <router-link to='/customer_search'>Search Professionals</router-link>
+    </div>
     <h4 align="center">Services</h4>
         <table class="table table-striped">
             <thead>

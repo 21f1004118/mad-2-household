@@ -310,8 +310,6 @@ def createCSV():
     return {'task_id' : task.id}
 
 
-
-
 @app.route('/report')
 def send_reports():
     res = monthly_report.delay()
@@ -319,3 +317,50 @@ def send_reports():
         "result": res
     }
 
+@app.route('/admin_search', methods=['POST'])
+@auth_required('token')
+def admin_search():
+    data = request.get_json()
+    param=data.get('Searchterm')
+    my_query="%"+param+"%"         
+    professional_search=Service_Professional.query.filter(Service_Professional.Name.like(my_query)).all()
+    print(professional_search)
+    professionals_json=[]
+    for professional in professional_search:
+        this_professional={}
+        this_professional['ID']=professional.ID
+        this_professional['name']=professional.Name
+        this_professional['Service']=professional.Service
+        this_professional['BasePrice']=professional.BasePrice
+        this_professional['Status']=professional.Status
+        professionals_json.append(this_professional)
+    return jsonify(professionals_json)
+
+@app.route('/customer_search', methods=['POST'])
+def customer_search():
+    data = request.get_json()
+    option=data.get('Searchby')
+    param=data.get('Searchterm')
+    my_query="%"+param+"%" 
+    if option=='name':
+        services_json=[]
+        services=Service.query.filter(Service.Name.like(my_query)).all()
+        for service in services:
+            this_service={}
+            this_service['ID']=service.ID
+            this_service['Name']=service.Name
+            this_service['BasePrice']=service.BasePrice
+            services_json.append(this_service)
+        return jsonify(services_json)
+    elif option=='location':
+        professional_search=Service_Professional.query.filter(Service_Professional.Location.like(my_query)).all()
+        print(professional_search)
+        services_json=[]
+        for professional in professional_search:
+            service=Service.query.filter_by(ID=professional.Service_id).first()
+            this_service={}
+            this_service['ID']=service.ID
+            this_service['Name']=service.Name
+            this_service['BasePrice']=service.BasePrice
+            services_json.append(this_service)
+        return jsonify(services_json)
